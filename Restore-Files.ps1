@@ -89,12 +89,31 @@ function Restore-Files {
 }
 
 
-
+<#
+These function calls and cleanup are for my local testing and can be ignored
 New-TestFiles
 
 Set-RandomTimestamps
 
+Get-ChildItem C:\Temp\Parent* -Filter *.txt -Recurse | Remove-Item
+#>
+
+
+# Show report of files that would have to be overwritten
 Restore-Files -OldDir C:\Temp\Parent1 -NewDir C:\Temp\Parent2
 
 
-#Get-ChildItem C:\Temp\Parent* -Filter *.txt -Recurse | Remove-Item
+<#
+Some more use of the output 
+
+Show the files that would be overwritten in a filterable PowerShell grid
+Restore-Files -OldDir C:\Temp\Parent1 -NewDir C:\Temp\Parent2
+
+Show the files that would be overwritten in a filterable PowerShell grid
+Restore-Files -OldDir C:\Temp\Parent1 -NewDir C:\Temp\Parent2 | Out-GridView
+
+Export the files that would be overwritten to a CSV
+Restore-Files -OldDir C:\Temp\Parent1 -NewDir C:\Temp\Parent2 | Export-CSV C:\Temp\RestoreFileReport.csv -NoTypeInformation
+#>
+
+
