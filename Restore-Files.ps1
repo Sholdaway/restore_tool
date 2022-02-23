@@ -1,4 +1,4 @@
-function Generate-Files {
+function New-TestFiles {
 
     1..2 | ForEach-Object {
 
@@ -33,4 +33,68 @@ function Generate-Files {
 }
 
 
-Generate-Files
+function Set-RandomTimestamps {
+
+    $DateInPast = Get-Date -Date 1.6.21
+
+    $TestFiles = Get-ChildItem C:\Temp\Parent2 -Filter *.txt -Recurse
+
+    $TestFiles | ForEach-Object {
+
+        $RandomInt = Get-Random -Minimum 1 -Maximum 10
+
+        $IsOdd = $RandomInt % 2 -as [bool]
+
+        if ($IsOdd) 
+        {
+            $_.LastWriteTime=$DateInPast
+        }
+    }
+}
+
+
+function Restore-Files {
+
+    param 
+    (
+        [Parameter()]
+        [string]
+        $OldDir,
+
+        [Parameter()]
+        [string]
+        $NewDir
+    )
+
+    Get-ChildItem -Path $OldDir -Recurse -File | ForEach-Object {
+
+        $OldFile = $_.FullName
+        
+        $NewFile = $OldFile.Replace($OldDir, $NewDir)
+
+        $OldFileDetails = Get-Item $OldFile
+        
+        $NewFileDetails = Get-Item $NewFile
+
+        if ($NewFileDetails.LastWriteTime -le $OldFileDetails.LastWriteTime)
+        {
+            $Output = [PSCustomObject]@{OldFileName = $OldFileDetails.FullName
+                                        OldFileLastWrite = $OldFileDetails.LastWriteTime
+                                        NewFileName = $NewFileDetails.Fullname
+                                        NewFileLastWrite = $NewFileDetails.LastWriteTime}
+                                    
+            Write-Output $Output
+        }
+    }
+}
+
+
+
+New-TestFiles
+
+Set-RandomTimestamps
+
+Restore-Files -OldDir C:\Temp\Parent1 -NewDir C:\Temp\Parent2
+
+
+#Get-ChildItem C:\Temp\Parent* -Filter *.txt -Recurse | Remove-Item
