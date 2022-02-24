@@ -1,3 +1,14 @@
+param 
+(
+    [Parameter(Mandatory=$true)]
+    [string]
+    $BackupDataDir,
+
+    [Parameter(Mandatory=$true)]
+    [string]
+    $LiveDataDir
+)
+
 function New-TestFiles {
 
     1..2 | ForEach-Object {
@@ -100,7 +111,7 @@ Get-ChildItem C:\Temp\Parent* -Filter *.txt -Recurse | Remove-Item
 
 
 # Show report of files that would have to be overwritten
-Restore-Files -OldDir C:\Temp\Parent1 -NewDir C:\Temp\Parent2
+Restore-Files -OldDir $BackupDataDir -NewDir $LiveDataDir
 
 
 <#
